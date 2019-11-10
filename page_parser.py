@@ -29,21 +29,21 @@ class PageParser():
         self.boil_soup()
 
     def get_matches(self, html_tag, keyword, item=None):
-        item = self.soup.find(html_tag, class_=keyword) if item is None else item
+        item = self.soup if item is None else item
         return item.find_all(html_tag, class_=keyword)
 
     def get_match_text(self, html_tag, keyword, tag):
-        return tag.find(html_tag, class_=keyword).get_text()
+        return self.get_matches(html_tag, keyword, tag)[0].get_text()
 
     def get_match_int(self, html_tag, keyword, tag):
         tmp = self.get_match_text(html_tag, keyword, tag)
         return int(re.findall(r'\d+', tmp)[0])
 
     def get_match_other(self, html_tag, keyword, tag, other):
-        return tag.find(html_tag, class_=keyword)[other]
+        return self.get_matches(html_tag, keyword, tag)[0][other]
 
     def get_match_tags(self, html_tag, keyword, tag):
-        return [x.get_text() for x in tag.find_all(html_tag, class_=keyword)]
+        return [x.get_text() for x in self.get_matches(html_tag, keyword, tag)]
 
     def get_question_summaries(self):
 
@@ -59,5 +59,6 @@ class PageParser():
             summary.tags = self.get_match_tags("a", "post-tag", q)
             summary.date = self.get_match_other("span", "relativetime", q, 'title')
             summaries.append(summary)
+            summary.pretty_print()
 
         return summaries
