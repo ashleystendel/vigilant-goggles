@@ -7,7 +7,6 @@ def main():
     parser = PageParser("https://medicalsciences.stackexchange.com/")
     questions = parser.get_question_summaries()
     for question in questions:
-        print(question)
-
+        question.pretty_print()
 if __name__ == '__main__':
     main()

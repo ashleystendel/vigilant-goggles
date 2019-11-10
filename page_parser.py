@@ -16,15 +16,10 @@ class PageParser():
         self.url = url
         self.website = None
         self.soup = None
-        self.domain_name = self.set_domain_name()
         self.get_and_boil_soup()
 
     def get_webpage(self):
         self.website = requests.get(self.url)
-
-    def set_domain_name(self):
-        parsed_uri = urlparse(self.url)
-        return '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
 
     def boil_soup(self):
         self.soup = BeautifulSoup(self.website.text, 'html.parser')
@@ -56,7 +51,7 @@ class PageParser():
         qs = self.get_matches(QuestionSummary.html_tag, QuestionSummary.summary)
         for q in qs:
             summary = QuestionSummary()
-            summary.ref = self.domain_name + self.get_match_other("a", "question-hyperlink", q, 'href')
+            summary.ref = self.get_match_other("a", "question-hyperlink", q, 'href')
             summary.vote_count = self.get_match_int("div", "votes", q)
             summary.answer_count = self.get_match_int("div", "status", q)
             summary.view_count = self.get_match_int("div", "views", q)
