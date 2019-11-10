@@ -15,5 +15,18 @@ class QuestionSummary():
         self.date = None
 
     def pretty_print(self):
-        print(f'{self.vote_count}, {self.vote_count}, {self.answer_count}, ' +
-              f'{self.view_count}, {self.question}, {self.tags}, {self.date}')
+        info = (
+                f'Question Text: {self.question}\n'
+                f'Votes: {self.vote_count}\n'
+                f'Answers: {self.answer_count}\n'
+                f'Views: {self.view_count}\n'
+                f'Tags: {self.tags}\n'
+                f'Date Posted: {self.date}\n'
+                f'URL: {self.ref}\n'
+                )
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    def get_dict_of_attributes(self):
+        return self.__dict__

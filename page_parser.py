@@ -28,14 +28,15 @@ class PageParser():
         self.get_webpage()
         self.boil_soup()
 
-    def get_matches(self, html_tag, keyword):
-        return self.soup.find_all(html_tag, class_=keyword)
+    def get_matches(self, html_tag, keyword, item=None):
+        item = self.soup.find(html_tag, class_=keyword) if item is None else item
+        return item.find_all(html_tag, class_=keyword)
 
     def get_match_text(self, html_tag, keyword, tag):
         return tag.find(html_tag, class_=keyword).get_text()
 
     def get_match_int(self, html_tag, keyword, tag):
-        tmp = tag.find(html_tag, class_=keyword).get_text()
+        tmp = self.get_match_text(html_tag, keyword, tag)
         return int(re.findall(r'\d+', tmp)[0])
 
     def get_match_other(self, html_tag, keyword, tag, other):
@@ -60,5 +61,3 @@ class PageParser():
             summaries.append(summary)
 
         return summaries
-
-
