@@ -2,15 +2,12 @@
 import requests
 import re
 from question_summary import *
+from user import *
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
-def _get_match_int(html_tag, keyword, tag):
-    tmp = tag.find(html_tag, class_=keyword)
-    return int(re.findall(r'\d+', tmp.get_text())[0])
 
-
-class PageParser():
+class PageParser:
 
     def __init__(self, url):
         self.url = url
@@ -44,21 +41,3 @@ class PageParser():
 
     def get_match_tags(self, html_tag, keyword, tag):
         return [x.get_text() for x in self.get_matches(html_tag, keyword, tag)]
-
-    def get_question_summaries(self):
-
-        summaries = []
-        qs = self.get_matches(QuestionSummary.html_tag, QuestionSummary.summary)
-        for q in qs:
-            summary = QuestionSummary()
-            summary.ref = self.get_match_other("a", "question-hyperlink", q, 'href')
-            summary.vote_count = self.get_match_int("div", "votes", q)
-            summary.answer_count = self.get_match_int("div", "status", q)
-            summary.view_count = self.get_match_int("div", "views", q)
-            summary.question = self.get_match_text("a", "question-hyperlink", q)
-            summary.tags = self.get_match_tags("a", "post-tag", q)
-            summary.date = self.get_match_other("span", "relativetime", q, 'title')
-            summaries.append(summary)
-            summary.pretty_print()
-
-        return summaries
