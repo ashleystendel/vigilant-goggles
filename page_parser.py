@@ -1,10 +1,7 @@
 """ Module that fetches information from website """
 import requests
 import re
-from question_summary import *
-from user import *
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 
 
 class PageParser:
