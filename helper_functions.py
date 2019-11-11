@@ -1,6 +1,7 @@
 from question_summary import *
 from user import *
 
+
 def find_and_populate(parser, html_tag, label, class_name):
     collection = []
     klass = globals()[class_name]
