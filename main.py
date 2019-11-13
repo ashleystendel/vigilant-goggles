@@ -3,9 +3,10 @@
 # This program scrapes https://medicalsciences.stackexchange.com/
 #####################################################################
 import sys
-from helper_functions import *
 import argparse
 
+from page_parser import PageParser
+from question_summary import QuestionSummary
 
 
 def main():
@@ -20,24 +21,18 @@ def main():
 
     results = {}
     if args.page_type == 'questions':
-        summaries = []
-        for i in range (args.num_pages):
-            summary_parser = PageParser(f"https://medicalsciences.stackexchange.com/questions?tab=newest&page={i}")
-            summaries.append(find_and_populate(summary_parser, "div", "question-summary", 'QuestionSummary'))
-        results["question_summaries"] = summaries
+        summary_parser = PageParser("https://medicalsciences.stackexchange.com/questions?tab=newest&page=")
+        summaries = summary_parser.get_pages(QuestionSummary, 1)
+        results['summaries'] = summaries
 
-    if args.page_type == 'users':
-        users = []
-        for i in range (args.num_pages):
-            user_page_parser = PageParser(f"https://medicalsciences.stackexchange.com/users?page={i}&tab=reputation&filter=month")
-            users.append(find_and_populate(user_page_parser, "div", "grid-layout--cell user-info  user-hover", 'User'))
-        results["users"] = users
+    # if args.page_type == 'users':
+    #     users = []
+    #     for i in range (args.num_pages):
+    #         user_page_parser = PageParser(f"https://medicalsciences.stackexchange.com/users?page={i}&tab=reputation&filter=month")
+    #         users.append(find_and_populate(user_page_parser, "div", "grid-layout--cell user-info  user-hover", 'User'))
+    #     results["users"] = users
 
-    if args.s:
-        with open('results.csv', w):
-            a = 3
-
-    print(results)
-
+    # list(map(QuestionSummary.pretty_print, summaries))
+    print(len(summaries))
 if __name__ == '__main__':
     main()

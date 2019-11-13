@@ -3,7 +3,10 @@
 
 class QuestionSummary:
 
-    def __init__(self, parser):
+    HTML_TAG = "div"
+    KEYWORD = "question-summary"
+
+    def __init__(self, parser=None):
         self.ref = None
         self.vote_count = None
         self.answer_count = None
@@ -14,6 +17,7 @@ class QuestionSummary:
         self.parser = parser
 
     def pretty_print(self):
+
         info = (
                 f'Question Text: {self.question}\n'
                 f'Votes: {self.vote_count}\n'
@@ -25,14 +29,14 @@ class QuestionSummary:
                 )
         print(info)
 
-    def scrape_info(self, input):
-        self.ref = self.parser.get_match_other("a", "question-hyperlink", input, 'href')
-        self.vote_count = self.parser.get_match_int("div", "votes", input)
-        self.answer_count = self.parser.get_match_int("div", "status", input)
-        self.view_count = self.parser.get_match_int("div", "views", input)
-        self.question = self.parser.get_match_text("a", "question-hyperlink", input)
-        self.tags = self.parser.get_match_tags("a", "post-tag", input)
-        self.date = self.parser.get_match_other("span", "relativetime", input, 'title')
+    def scrape_info(self, match):
+        self.ref = self.parser.get_match_other("a", "question-hyperlink", match, 'href')
+        self.vote_count = self.parser.get_match_int("div", "votes", match)
+        self.answer_count = self.parser.get_match_int("div", "status", match)
+        self.view_count = self.parser.get_match_int("div", "views", match)
+        self.question = self.parser.get_match_text("a", "question-hyperlink", match)
+        self.tags = self.parser.get_match_tags("a", "post-tag", match)
+        self.date = self.parser.get_match_other("span", "relativetime", match, 'title')
 
     def __str__(self):
         return str(self.__dict__)
