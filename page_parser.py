@@ -81,7 +81,7 @@ class PageParser:
         """
         return self.get_matches(html_tag, keyword, tag)[0][other]
 
-    def get_match_tags(self, html_tag, keyword, tag):
+    def get_match_list(self, html_tag, keyword, tag):
         """
         returns the string content from a list of repeating items
         :param html_tag: html tag

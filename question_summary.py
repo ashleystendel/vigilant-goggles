@@ -40,7 +40,7 @@ class QuestionSummary:
         self.answer_count = self.parser.get_match_int("div", "status", match)
         self.view_count = self.parser.get_match_int("div", "views", match)
         self.question = self.parser.get_match_text("a", "question-hyperlink", match)
-        self.tags = self.parser.get_match_tags("a", "post-tag", match)
+        self.tags = self.parser.get_match_list("a", "post-tag", match)
         self.date = self.parser.get_match_other("span", "relativetime", match, 'title')
 
     def __str__(self):
