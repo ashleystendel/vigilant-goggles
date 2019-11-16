@@ -1,4 +1,5 @@
-""" Object containing information from a Question self """
+""" QuestionSummary class contains the fields of a question summary
+ """
 
 
 class QuestionSummary:
@@ -30,6 +31,10 @@ class QuestionSummary:
         print(info)
 
     def scrape_info(self, match):
+        """
+        sets the fields of a QuestionSummary from the html snippet
+        :param match: html segment containing question summary
+        """
         self.ref = self.parser.get_match_other("a", "question-hyperlink", match, 'href')
         self.vote_count = self.parser.get_match_int("div", "votes", match)
         self.answer_count = self.parser.get_match_int("div", "status", match)
