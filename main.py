@@ -13,7 +13,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('page_type', choices=['questions', 'tags'], type=str)
     parser.add_argument('--num_pages', type=int)
-    parser.add_argument('-s', action='store_true')
     args = parser.parse_args()
 
     if args.num_pages is None:
