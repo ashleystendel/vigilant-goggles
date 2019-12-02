@@ -7,3 +7,4 @@ __pycache__/
 password.txt
 scraper_schema.mwb*
 *.pdf
+config.json
