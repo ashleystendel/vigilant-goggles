@@ -4,3 +4,6 @@ __pycache__/
 .idea/
 .DS_Store
 *.ipynb
+password.txt
+scraper_schema.mwb*
+*.pdf
