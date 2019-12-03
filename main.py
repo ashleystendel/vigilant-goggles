@@ -7,7 +7,7 @@ import argparse
 from page_parser import PageParser
 from question_summary import QuestionSummary
 from tag import Tag
-import database_connection
+from database_connection import Database
 
 
 def main():
@@ -22,22 +22,21 @@ def main():
 
     results = {}
     if args.page_type == 'questions':
+        db = Database()
+
+        tag_parser = PageParser("https://medicalsciences.stackexchange.com/tags?page=")
+        tags = tag_parser.get_pages(Tag, 1)
+        results['tags'] = tags
+        db.insert_tags(results['tags'])
+
         summary_parser = PageParser("https://medicalsciences.stackexchange.com/questions?tab=newest&page=")
         summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)
         results['summaries'] = summaries
-        rows = list(map((lambda x: x.__dict__), summaries))
-        table_name = 'Questions'
-
-    if args.page_type == 'tags':
-        tag_parser = PageParser("https://medicalsciences.stackexchange.com/tags?page=")
-        tags = tag_parser.get_pages(Tag, args.num_pages)
-        results['tags'] = tags
-        rows = list(map((lambda x: x.__dict__), tags))
-        table_name = 'Tags'
+        db.insert_question_summaries(results['summaries'])
 
     if args.update_db:
-        db = database_connection()
-        db.insert_rows(table_name, rows)
+        pass
+
 
 if __name__ == '__main__':
     main()

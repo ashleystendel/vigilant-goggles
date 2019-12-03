@@ -9,12 +9,18 @@ class Tag:
 
     def __init__(self, parser=None):
         self.name = ""
-        self.count_day = None
-        self.count_week = None
-        self.count_month = None
-        self.count_year = None
-        self.total_count = None
+        self.count_day = 0
+        self.count_week = 0
+        self.count_month = 0
+        self.count_year = 0
+        self.total_count = 0
         self.parser = parser
+
+    def convert_to_tuple(self, delete=""):
+        d_dict = self.__dict__.copy()
+        d_dict.pop('parser', None)
+        d_dict.pop(delete, None)
+        return tuple(d_dict.values())
 
     def scrape_info(self, match):
         """
@@ -42,13 +48,13 @@ class Tag:
         :return: None
         """
         if "today" in count:
-            self.count_day = self.extract_count(count)
+            self.count_day = int(self.extract_count(count))
         elif "week" in count: 
-            self.count_week = self.extract_count(count)
+            self.count_week = int(self.extract_count(count))
         elif "month" in count:
-            self.count_month = self.extract_count(count)
+            self.count_month = int(self.extract_count(count))
         elif "year" in count:
-            self.count_year = self.extract_count(count)
+            self.count_year = int(self.extract_count(count))
 
     def set_counts(self, counts):
         """

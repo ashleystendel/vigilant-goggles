@@ -14,8 +14,14 @@ class QuestionSummary:
         self.view_count = None
         self.question = None
         self.tags = None
-        self.date = None
+        self.date_posted = None
         self.parser = parser
+
+    def convert_to_tuple(self, delete=""):
+        d_dict = self.__dict__.copy()
+        d_dict.pop('parser', None)
+        d_dict.pop(delete, None)
+        return tuple(d_dict.values())
 
     def pretty_print(self):
 
@@ -25,7 +31,7 @@ class QuestionSummary:
                 f'Answers: {self.answer_count}\n'
                 f'Views: {self.view_count}\n'
                 f'Tags: {self.tags}\n'
-                f'Date Posted: {self.date}\n'
+                f'Date Posted: {self.date_posted}\n'
                 f'URL: {self.ref}\n'
                 )
         print(info)
@@ -41,7 +47,7 @@ class QuestionSummary:
         self.view_count = self.parser.get_match_int("div", "views", match)
         self.question = self.parser.get_match_text("a", "question-hyperlink", match)
         self.tags = self.parser.get_match_list("a", "post-tag", match)
-        self.date = self.parser.get_match_other("span", "relativetime", match, 'title')
+        self.date_posted = self.parser.get_match_other("span", "relativetime", match, 'title')[:-2]
 
     def __str__(self):
         return str(self.__dict__)
