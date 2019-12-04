@@ -14,6 +14,6 @@ Fill in fields of config.py
 
 ## Usage
 
-`python main.py --num_pages {num_pages_to_scrape} --update_db`
+`python main.py --num_pages {num_pages_to_scrape} --url {url_to_scrape} [--update_tag_db]`
 #
 
