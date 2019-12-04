@@ -17,14 +17,15 @@ def main():
     args = parser.parse_args()
 
     if args.num_pages is None:
-        args.num_pages = 1
+        num_pages = 1
 
     results = {}
 
     db = Database()
-
+    if db.is_empty('Tags'):
+        num_pages = 9999
     tag_parser = PageParser("https://medicalsciences.stackexchange.com/tags?page=")
-    tags = tag_parser.get_pages(Tag, 1)
+    tags = tag_parser.get_pages(Tag, num_pages)
     results['tags'] = tags
     db.insert_tags(results['tags'])
 

@@ -85,6 +85,15 @@ class Database:
             return res
         return res[0]
 
+    def is_empty(self, table):
+        check = f"SELECT * FROM {table}"
+        self.curser.execute(check)
+        res = self.cursor.fetchAll()
+        if len(res) < 1:
+            return True
+        else:
+            return False
+
     def insert(self, table, columns, tup, date=()):
         """
         inserts data into table
