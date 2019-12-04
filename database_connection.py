@@ -93,10 +93,10 @@ class Database:
         check = f"SELECT * FROM {table}"
         self.cursor.execute(check)
         res = self.cursor.fetchone()
-        if len(res) < 1:
+        if not res:
             return True
-        else:
-            return False
+
+        return False
 
     def insert(self, table, columns, tup, date=()):
         """
