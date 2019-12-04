@@ -10,10 +10,15 @@ from tag import Tag
 from database_connection import Database
 
 
-def update_tag_table(tag_pages, db, url):
+def update_tag_table(db, url):
+    """
+    updates Tag database table
+    :param db: database object
+    :param url: url to scrape
+    """
     print("Updating DB")
     tag_parser = PageParser(url, "tags?page=")
-    tags = tag_parser.get_pages(Tag, tag_pages)
+    tags = tag_parser.get_pages(Tag, 9999)
     db.insert_tags(tags)
 
 
@@ -30,10 +35,10 @@ def main():
 
     if db.is_empty('Tag'):
         print("Empty DB")
-        update_tag_table(9999, db, args.url)
+        update_tag_table(db, args.url)
 
     if args.update_tag_db:
-        update_tag_table(9999, db, args.url)
+        update_tag_table(db, args.url)
 
     print("Getting Question Summaries")
     summary_parser = PageParser(args.url, "questions?tab=newest&page=")

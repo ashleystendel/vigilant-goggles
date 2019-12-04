@@ -17,6 +17,11 @@ class Tag:
         self.parser = parser
 
     def convert_to_tuple(self, delete=""):
+        """
+        gets values from object
+        :param delete: if attribute is not needed
+        :return: tuple of values for attributes
+        """
         d_dict = self.__dict__.copy()
         d_dict.pop('parser', None)
         d_dict.pop(delete, None)
@@ -45,7 +50,6 @@ class Tag:
         sets the calendar tag count attribute based on sentence
         (ex: 11 asks this month -> count_month = 11)
         :param count: sentence containing tag count per day/week/month/year
-        :return: None
         """
         if "today" in count:
             self.count_day = int(self.extract_count(count))
@@ -60,7 +64,6 @@ class Tag:
         """
         sets the calendar count attributes based on lists of sentences
         :param counts: List of sentences containing tag count per day/week/month/year
-        :return: None
         """
         for c in counts[0].split(','):
             self.set_count(c)

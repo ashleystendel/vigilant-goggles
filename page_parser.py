@@ -18,14 +18,12 @@ class PageParser:
         """
         performs get request to specific webpage and sets website attribute
         :param i: webpage number
-        :return: None
         """
         self.website = requests.get(self.url+i)
 
     def boil_soup(self):
         """
         create and sets BeautifulSoup soup attribute from webpage for parsing
-        :return: None
         """
         self.soup = BeautifulSoup(self.website.text, 'html.parser')
 
@@ -33,7 +31,6 @@ class PageParser:
         """
         performs a get request to website and create BeautifulSoup soup object from webpage for parsing
         :param i: webpage number
-        :return:
         """
         self.get_webpage(i)
         self.boil_soup()

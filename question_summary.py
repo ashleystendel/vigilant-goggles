@@ -18,6 +18,11 @@ class QuestionSummary:
         self.parser = parser
 
     def convert_to_tuple(self, delete=""):
+        """
+        gets values from object
+        :param delete: if attribute is not needed
+        :return: tuple of values for attributes
+        """
         d_dict = self.__dict__.copy()
         d_dict.pop('parser', None)
         d_dict.pop(delete, None)
