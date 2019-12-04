@@ -3,7 +3,7 @@
 # This program scrapes https://medicalsciences.stackexchange.com/
 #####################################################################
 import argparse
-
+import config
 from page_parser import PageParser
 from question_summary import QuestionSummary
 from tag import Tag
@@ -45,8 +45,6 @@ def main():
     summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)
     results['summaries'] = summaries
     db.insert_question_summaries(results['summaries'])
-
-
 
 
 if __name__ == '__main__':

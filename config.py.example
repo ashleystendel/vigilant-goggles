@@ -3,3 +3,5 @@ mysql = {'host': 'localhost',
          'password': 'PASSWORD',
          'database': 'vgdb',
          'auth_plugin': 'mysql_native_password'}
+urls = {'tags': "https://medicalsciences.stackexchange.com/tags?page=",
+        'questions': "https://medicalsciences.stackexchange.com/questions?tab=newest&page="}
