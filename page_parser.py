@@ -8,9 +8,10 @@ from bs4 import BeautifulSoup
 
 class PageParser:
 
-    def __init__(self, url):
-        self.url = url
+    def __init__(self, url, ext):
+        self.url = url.rstrip('/') + '/' + ext
         self.website = None
+        print(self.url)
         self.soup = None
 
     def get_webpage(self, i):
