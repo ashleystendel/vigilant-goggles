@@ -6,6 +6,7 @@ from associated_tag import AssociatedTag
 from tag import Tag
 import config
 
+
 class Database:
     def __init__(self):
         sql_config = config.mysql
