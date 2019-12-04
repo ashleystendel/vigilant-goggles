@@ -16,16 +16,14 @@ def main():
     parser.add_argument('--update_db', '-u', help='Upsert scraped data to database')
     args = parser.parse_args()
 
-    if args.num_pages is None:
-        num_pages = 1
-
     results = {}
 
     db = Database()
-    if db.is_empty('Tags'):
-        num_pages = 9999
+    tag_pages = args.num_pages
+    if db.is_empty('Tag'):
+        tag_pages = 9999
     tag_parser = PageParser("https://medicalsciences.stackexchange.com/tags?page=")
-    tags = tag_parser.get_pages(Tag, num_pages)
+    tags = tag_parser.get_pages(Tag, tag_pages)
     results['tags'] = tags
     db.insert_tags(results['tags'])
 
