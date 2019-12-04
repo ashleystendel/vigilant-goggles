@@ -3,7 +3,7 @@
 # This program scrapes https://medicalsciences.stackexchange.com/
 #####################################################################
 import argparse
-
+import config
 from page_parser import PageParser
 from question_summary import QuestionSummary
 from tag import Tag
@@ -16,20 +16,17 @@ def main():
     parser.add_argument('--update_db', '-u', help='Upsert scraped data to database')
     args = parser.parse_args()
 
-    if args.num_pages is None:
-        num_pages = 1
-
     results = {}
 
     db = Database()
     if db.is_empty('Tags'):
-        num_pages = 9999
-    tag_parser = PageParser("https://medicalsciences.stackexchange.com/tags?page=")
-    tags = tag_parser.get_pages(Tag, num_pages)
+        args.num_pages = 9999
+    tag_parser = PageParser(config.urls.tags)
+    tags = tag_parser.get_pages(Tag, args.num_pages)
     results['tags'] = tags
     db.insert_tags(results['tags'])
 
-    summary_parser = PageParser("https://medicalsciences.stackexchange.com/questions?tab=newest&page=")
+    summary_parser = PageParser(config.urls.questions)
     summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)
     results['summaries'] = summaries
     db.insert_question_summaries(results['summaries'])
