@@ -57,7 +57,10 @@ class PageParser:
         :param tag: html snippet
         :return: string text from the html tag
         """
-        return self.get_matches(html_tag, keyword, tag)[0].get_text()
+        res = self.get_matches(html_tag, keyword, tag)
+        if not res:
+            return 0
+        return res[0].get_text()
 
     def get_match_int(self, html_tag, keyword, tag):
         """
@@ -68,6 +71,8 @@ class PageParser:
         :return: integer content from the html tag
         """
         tmp = self.get_match_text(html_tag, keyword, tag)
+        if tmp == 0:
+            return 0
         return int(re.findall(r'\d+', tmp)[0])
 
     def get_match_other(self, html_tag, keyword, tag, other):
@@ -95,13 +100,12 @@ class PageParser:
         """
         returns list of objects of type klass by extracting html content of one webpage
         :param klass: type of object
-        :param i: page number
+        :param i: string page number
         :return: list of populated objects of type klass
         """
         self.get_and_boil_soup(i)
         summary_page = []
         matches = self.get_matches(klass.HTML_TAG, klass.KEYWORD)
-
         for match in matches:
             item = klass(self)
             item.scrape_info(match)
@@ -117,7 +121,18 @@ class PageParser:
         :return: list of populated objects of type klass
         """
         summaries = []
-        for i in range(1, num_pages+1):
+        max_pages = min(num_pages+1, int(self.get_max_pages())+1)
+        print(max_pages)
+        for i in range(1, max_pages):
             summaries.extend(self.get_page(klass, str(i)))
         return summaries
 
+    def get_max_pages(self):
+        """
+        gets the max number of pages that contain information
+        :return: string max number of pages
+        """
+        self.get_and_boil_soup('1')
+        numbers = self.get_matches("span", "page-numbers")
+        max_page = numbers[-2].get_text()
+        return max_page
