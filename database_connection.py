@@ -10,16 +10,15 @@ class Database:
     def __init__(self):
         sql_config = config.mysql
         try:
-            self.db = mysql.connector.connect(**sql_config)
+            self.db = mysql.connector.connect(**sql_config, use_pure=True)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
                 print("Database does not exist")
             else:
-                print("VDVSDVSDVSD")
                 print(err)
-        self.cursor = self.db.cursor()
+        self.cursor = self.db.cursor(buffered=True)
 
     def update_helper(self, d, columns):
         """
@@ -86,9 +85,14 @@ class Database:
         return res[0]
 
     def is_empty(self, table):
+        """
+        checks if the database is populated
+        :param table: table name
+        :return: True if populated else False
+        """
         check = f"SELECT * FROM {table}"
-        self.curser.execute(check)
-        res = self.cursor.fetchAll()
+        self.cursor.execute(check)
+        res = self.cursor.fetchone()
         if len(res) < 1:
             return True
         else:
