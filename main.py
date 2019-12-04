@@ -12,27 +12,27 @@ from database_connection import Database
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('page_type', choices=['questions', 'tags'], type=str)
     parser.add_argument('--num_pages', type=int)
     parser.add_argument('--update_db', '-u', help='Upsert scraped data to database')
     args = parser.parse_args()
 
     if args.num_pages is None:
-        args.num_pages = 1
+        num_pages = 1
 
     results = {}
-    if args.page_type == 'questions':
-        db = Database()
 
-        tag_parser = PageParser("https://medicalsciences.stackexchange.com/tags?page=")
-        tags = tag_parser.get_pages(Tag, 1)
-        results['tags'] = tags
-        db.insert_tags(results['tags'])
+    db = Database()
+    if db.is_empty('Tags'):
+        num_pages = 9999
+    tag_parser = PageParser("https://medicalsciences.stackexchange.com/tags?page=")
+    tags = tag_parser.get_pages(Tag, num_pages)
+    results['tags'] = tags
+    db.insert_tags(results['tags'])
 
-        summary_parser = PageParser("https://medicalsciences.stackexchange.com/questions?tab=newest&page=")
-        summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)
-        results['summaries'] = summaries
-        db.insert_question_summaries(results['summaries'])
+    summary_parser = PageParser("https://medicalsciences.stackexchange.com/questions?tab=newest&page=")
+    summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)
+    results['summaries'] = summaries
+    db.insert_question_summaries(results['summaries'])
 
     if args.update_db:
         pass

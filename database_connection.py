@@ -1,26 +1,23 @@
-import json
 import mysql.connector
 from mysql.connector import errorcode
 import datetime
 import inflection
 from associated_tag import AssociatedTag
 from tag import Tag
-
+import config
 
 class Database:
     def __init__(self):
-        with open('config.json') as json_data_file:
-            data = json.load(json_data_file)
-            sql_config = data['mysql']
-
+        sql_config = config.mysql
         try:
-            self.db = mysql.connector.connect(**sql_config, use_pure=True)
+            self.db = mysql.connector.connect(**sql_config)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
                 print("Database does not exist")
             else:
+                print("VDVSDVSDVSD")
                 print(err)
         self.cursor = self.db.cursor()
 
@@ -87,6 +84,15 @@ class Database:
         if not res:
             return res
         return res[0]
+
+    def is_empty(self, table):
+        check = f"SELECT * FROM {table}"
+        self.curser.execute(check)
+        res = self.cursor.fetchAll()
+        if len(res) < 1:
+            return True
+        else:
+            return False
 
     def insert(self, table, columns, tup, date=()):
         """
