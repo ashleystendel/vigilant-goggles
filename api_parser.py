@@ -22,7 +22,7 @@ class APIParser:
         obj = klass(info)
         return obj
 
-    def get_responses(self, klass):
+    def get_responses(self, klass, reference_objects):
         """
         returns list of objects of type klass
         :param klass: type of object
@@ -30,7 +30,8 @@ class APIParser:
         :return: list of populated objects of type klass
         """
         responses = []
-        data = [['blood', 'death'], 'hair']
-        for datum in data:
-            responses.append(self.get_response(datum, klass))
+        for obj in reference_objects:
+            key_words = obj.get_tags()
+            responses.append(self.get_response(key_words, klass))
+
         return responses

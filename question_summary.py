@@ -55,6 +55,9 @@ class QuestionSummary:
                 )
         print(info)
 
+    def get_tags(self):
+        return self.tags
+
     def __str__(self):
         return str(self.__dict__)
 
