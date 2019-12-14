@@ -1,17 +1,15 @@
 """ Parser object that fetches information from website """
-import time
-
 import requests
 import re
 from bs4 import BeautifulSoup
-
+import config
 
 class PageParser:
 
-    def __init__(self, url, ext):
-        self.url = url.rstrip('/') + '/' + ext
-        self.website = None
-        print(self.url)
+    def __init__(self, obj_type):
+        url_config = config.url
+        self.url = url_config['base_url'].rstrip('/') + '/' + url_config[obj_type]
+        self.website = url_config['base_url']
         self.soup = None
 
     def get_webpage(self, i):
@@ -120,7 +118,7 @@ class PageParser:
         """
         summaries = []
         max_pages = min(num_pages+1, int(self.get_max_pages())+1)
-
+        max_pages = max(1, max_pages)
         for i in range(1, max_pages):
             summaries.extend(self.get_page(klass, str(i)))
         return summaries
