@@ -15,9 +15,10 @@ class APIParser:
         performs get request to specific api
         :param i: list of key words
         """
-        # TODO: make the request string more agnostic
+        # TODO: error handling on get request
         request_string = self.base_url + '\{' + key_words + '}&api-key=' + self.key
-        info = requests.get(request_string)
+        response = requests.get(request_string)
+        info = response.json()
         obj = klass(info)
         return obj
 
