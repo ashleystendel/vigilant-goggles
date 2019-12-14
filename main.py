@@ -3,12 +3,12 @@
 # This program scrapes https://medicalsciences.stackexchange.com/
 #####################################################################
 import argparse
-
+from api_parser import APIParser
 from page_parser import PageParser
 from question_summary import QuestionSummary
 from tag import Tag
 from database_connection import Database
-
+from article import Article
 
 def update_tag_table(db, url):
     """
@@ -45,9 +45,10 @@ def main():
     summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)
     results['summaries'] = summaries
     db.insert_question_summaries(results['summaries'])
-
-
-
+    #########GET ARTICLES#######################
+    article_parser = APIParser()
+    articles = article_parser.get_responses(Article)
+    print(articles)
 
 if __name__ == '__main__':
     main()
