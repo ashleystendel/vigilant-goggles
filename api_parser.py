@@ -32,5 +32,5 @@ class APIParser:
         responses = []
         data = [['blood', 'death'], 'hair']
         for datum in data:
-            responses.extend(self.get_response(datum, klass))
+            responses.append(self.get_response(datum, klass))
         return responses
