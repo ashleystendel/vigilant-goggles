@@ -3,5 +3,10 @@ mysql = {'host': 'localhost',
          'password': 'PASSWORD',
          'database': 'vgdb',
          'auth_plugin': 'mysql_native_password'}
+
 urls = {'tags': "https://medicalsciences.stackexchange.com/tags?page=",
         'questions': "https://medicalsciences.stackexchange.com/questions?tab=newest&page="}
+
+api = {
+            "key": "api_keyqq",
+            "base_url": "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=" }

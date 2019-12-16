@@ -2,6 +2,8 @@ import mysql.connector
 from mysql.connector import errorcode
 import datetime
 import inflection
+
+from associated_article import AssociatedArticle
 from associated_tag import AssociatedTag
 from tag import Tag
 import config
@@ -35,7 +37,7 @@ class Database:
         for field, col in zip(fields, cols):
             val = getattr(d, field)
             if type(val) == str:
-                res += f"{col} = \'{val}\', "
+                res += f"{col} = \"{val}\", "
             else:
                 res += f"{col} = {val}, "
 
@@ -123,10 +125,9 @@ class Database:
         query = f"UPDATE {table} SET \
                 {fields} dateScraped = '{date}' \
                 WHERE id{table} = {primary_key}"
-
         self.cursor.execute(query)
 
-    def upsert(self, obj, date, columns, table, to_del=""):
+    def upsert(self, obj, date, columns, table, to_del=[]):
         """
         performs an insert if data is not in table or an update if it is present
         :param obj: object with values to update in database
@@ -146,6 +147,12 @@ class Database:
             self.update(table, fields, date, res)
         self.db.commit()
 
+    def insert_articles(self, data):
+        date = str(datetime.datetime.now())
+
+        for row in data:
+            self.upsert(row, date, ["id"], "Article")
+
     def insert_tags(self, data):
         """
         inserts Tag objects into Tag table
@@ -164,15 +171,27 @@ class Database:
         date = str(datetime.datetime.now())
 
         for row in data:
-            self.upsert(row, date, ["ref"], "QuestionSummary", 'tags')
+            tags = row.tags
+            articles = row.articles
+
+            self.upsert(row, date, ["ref"], "QuestionSummary", ['tags', 'articles'])
+            self.insert_articles(articles)
+
             qs_id = self.check("QuestionSummary", row, ["ref"])
-            for tag in row.tags:
-                tag_obj = Tag()
-                tag_obj.name = tag
-                tag_id = self.check("Tag", tag_obj, ["name"])
+
+            for tag in tags:
+                tag_id = self.check("Tag", tag, ["name"])
                 ass_tag = AssociatedTag(tag_id, qs_id)
                 res = self.check("AssociatedTag", ass_tag, ["tagId", "questionSummaryId"])
 
                 if not res:
-                    a_tag = AssociatedTag(tag_id, qs_id)
                     self.insert("AssociatedTag", "tagId, questionSummaryId", (tag_id, qs_id))
+
+            for article in articles:
+                article_id = self.check("Article", article, ["id"])
+                ass_tag = AssociatedArticle(article_id, qs_id)
+                res = self.check("AssociatedArticle", ass_tag, ["articleId", "questionSummaryId"])
+
+                if not res:
+                    self.insert("AssociatedArticle", "articleId, questionSummaryId", (article_id, qs_id))
+

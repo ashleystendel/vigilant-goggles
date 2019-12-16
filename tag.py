@@ -7,8 +7,8 @@ class Tag:
     HTML_TAG = "div"
     KEYWORD = "tag-cell"
 
-    def __init__(self, parser=None):
-        self.name = ""
+    def __init__(self, parser=None, name=""):
+        self.name = name
         self.count_day = 0
         self.count_week = 0
         self.count_month = 0
@@ -16,15 +16,15 @@ class Tag:
         self.total_count = 0
         self.parser = parser
 
-    def convert_to_tuple(self, delete=""):
+    def convert_to_tuple(self, delete=[]):
         """
         gets values from object
-        :param delete: if attribute is not needed
+        :param delete: list of attributes that are not needed not needed (ex: for sql select)
         :return: tuple of values for attributes
         """
         d_dict = self.__dict__.copy()
-        d_dict.pop('parser', None)
-        d_dict.pop(delete, None)
+        for e in delete + ['parser']:
+            d_dict.pop(e, None)
         return tuple(d_dict.values())
 
     def scrape_info(self, match):

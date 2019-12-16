@@ -1,7 +1,7 @@
-class AssociatedTag:
+class AssociatedArticle:
 
-    def __init__(self, tag_id, qs_id):
-        self.tag_id = tag_id
+    def __init__(self, article_id, qs_id):
+        self.article_id = article_id
         self.question_summary_id = qs_id
 
     def convert_to_tuple(self, delete=[]):

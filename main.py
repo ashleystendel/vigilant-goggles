@@ -45,13 +45,15 @@ def main():
     print("Getting Question Summaries...")
     summary_parser = PageParser("question_summary")
     summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)
-    results['summaries'] = summaries
-    db.insert_question_summaries(results['summaries'])
 
     #########GET ARTICLES#######################
     article_parser = APIParser()
-    articles = article_parser.get_responses(Article)
-    print(articles)
+    articles = article_parser.get_responses(Article, summaries)
+
+    for question_summary, articles_list in zip(summaries, articles):
+        question_summary.add_articles(articles_list)
+
+    db.insert_question_summaries(summaries)
 
 if __name__ == '__main__':
     main()
