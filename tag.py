@@ -1,8 +1,10 @@
 """ Tag class contains the fields of a tag object"""
+
 import re
+from generic_observation import GenericObservation
 
 
-class Tag:
+class Tag(GenericObservation):
     
     HTML_TAG = "div"
     KEYWORD = "tag-cell"
@@ -15,17 +17,6 @@ class Tag:
         self.count_year = 0
         self.total_count = 0
         self.parser = parser
-
-    def convert_to_tuple(self, delete=[]):
-        """
-        gets values from object
-        :param delete: list of attributes that are not needed not needed (ex: for sql select)
-        :return: tuple of values for attributes
-        """
-        d_dict = self.__dict__.copy()
-        for e in delete + ['parser']:
-            d_dict.pop(e, None)
-        return tuple(d_dict.values())
 
     def scrape_info(self, match):
         """
