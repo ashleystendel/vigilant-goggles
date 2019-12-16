@@ -6,6 +6,8 @@ Web scraping medical stackexchange
 python 3.6
 
 ## Set-up 
+`sh create_schema.sh`
+
 `pip install -r requirments.txt`
 
 `cp config.py.example config.py`
