@@ -1,8 +1,9 @@
 """ Article class contains the fields of a Article object"""
+from generic_observation import GenericObservation
 import re
 
 
-class Article:
+class Article(GenericObservation):
     def __init__(self, args):
         self.abstract = args.get('abstract', "").strip()[:5000]
         self.web_url = args.get('web_url', "").strip()
@@ -26,17 +27,6 @@ class Article:
             string = getattr(self, key)
             clean_string = re.sub('\"', "'", string)
             setattr(self, key, clean_string)
-
-    def convert_to_tuple(self, delete=[]):
-        """
-        gets values from object
-        :param delete: if attribute is not needed
-        :return: tuple of values for attributes
-        """
-        d_dict = self.__dict__.copy()
-        for e in delete + ['parser']:
-            d_dict.pop(e, None)
-        return tuple(d_dict.values())
 
     def get_attributes(self):
         return self.__dict__

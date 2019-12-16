@@ -1,9 +1,10 @@
 """ QuestionSummary class contains the fields of a question summary
  """
+from generic_observation import GenericObservation
 from tag import Tag
 
 
-class QuestionSummary:
+class QuestionSummary(GenericObservation):
 
     HTML_TAG = "div"
     KEYWORD = "question-summary"
@@ -33,17 +34,6 @@ class QuestionSummary:
         tags = self.parser.get_match_list("a", "post-tag", match)
         self.tags = [Tag(name = t) for t in tags ]
         self.date_posted = self.parser.get_match_other("span", "relativetime", match, 'title')[:-2]
-
-    def convert_to_tuple(self, delete=[]):
-        """
-        gets values from object
-        :param delete: list of attributes that are not needed not needed (ex: for sql select)
-        :return: tuple of values for attributes
-        """
-        d_dict = self.__dict__.copy()
-        for e in delete + ['parser']:
-            d_dict.pop(e, None)
-        return tuple(d_dict.values())
 
     def add_articles(self, articles):
         """

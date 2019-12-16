@@ -2,8 +2,10 @@
 from config import api
 import requests
 from logger import Logger
+import time
 
 log = Logger()
+
 
 class APIParser:
 
@@ -19,7 +21,7 @@ class APIParser:
         # TODO: error handling on get request
         request_string = self.base_url + '\{' + ",".join(key_words) + '}&api-key=' + self.key
         response = requests.get(request_string)
-
+        time.sleep(6)
         if response.status_code == 200:
             info = response.json()
             obj_dict = info['response']['docs']
