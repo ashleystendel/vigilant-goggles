@@ -1,3 +1,6 @@
+"""Stores association between Question Summary Id and Tag Id"""
+
+
 class AssociatedTag:
 
     def __init__(self, tag_id, qs_id):

@@ -4,6 +4,7 @@ import re
 from bs4 import BeautifulSoup
 import config
 
+
 class PageParser:
 
     def __init__(self, obj_type):
@@ -119,6 +120,7 @@ class PageParser:
         summaries = []
         max_pages = min(num_pages+1, int(self.get_max_pages())+1)
         max_pages = max(1, max_pages)
+
         for i in range(1, max_pages):
             summaries.extend(self.get_page(klass, str(i)))
         return summaries

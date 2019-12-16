@@ -18,11 +18,6 @@ def update_tag_table(db):
     updates Tag database table
     :param db: database object
     """
-    print("Updating DB...")
-    tag_parser = PageParser("tag")
-    tags = tag_parser.get_pages(Tag, MAX)
-    db.insert_tags(tags)
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -31,28 +26,25 @@ def main():
                         required=False, action='store_true')
     args = parser.parse_args()
 
-    results = {}
-
     db = Database()
-
-    if db.is_empty('Tag'):
-        print("Empty DB...")
-        update_tag_table(db)
-
-    if args.update_tag_db:
-        update_tag_table(db)
+    if db.is_empty('Tag') or args.update_tag_db:
+        tag_parser = PageParser("tag")
+        tags = tag_parser.get_pages(Tag, MAX)
+        db.update_tag_table(tags)
 
     print("Getting Question Summaries...")
     summary_parser = PageParser("question_summary")
     summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)
 
-    #########GET ARTICLES#######################
+    print("Getting Articles...")
     article_parser = APIParser()
     articles = article_parser.get_responses(Article, summaries)
 
+    #Enrich Question Summary with articles
     for question_summary, articles_list in zip(summaries, articles):
         question_summary.add_articles(articles_list)
 
+    print("Populating DB...")
     db.insert_question_summaries(summaries)
 
 if __name__ == '__main__':

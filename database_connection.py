@@ -5,7 +5,6 @@ import inflection
 
 from associated_article import AssociatedArticle
 from associated_tag import AssociatedTag
-from tag import Tag
 import config
 
 
@@ -23,25 +22,30 @@ class Database:
                 print(err)
         self.cursor = self.db.cursor(buffered=True)
 
-    def update_helper(self, d, columns):
+    def update_helper(self, d, columns, date=()):
         """
-        Converts db column names to object attributes and generates
-        update string section of SQL update
+        Creates UPDATE section of SQL UPDATE query string
+        from database column names and associated object
+        <attr1> = <val1>, <attr2> = <val2> ....
         :param d: object with values to update in database
         :param columns: string of table column names
         :return: string of update section for SQL update
         """
-        cols = columns.split(", ")[:-1]
-        fields = list(map((lambda x: inflection.underscore(x)), cols))
+        # Only add date scraped if in columns from table (Associated* does not have date)
+        cols = columns.copy()
         res = ""
+        if 'dateScraped' in cols:
+            cols.remove('dateScraped')
+            res = f"dateScraped = \"{date}\", "
+
+        #Convert camel case database column names to underscore for object
+        fields = list(map((lambda x: inflection.underscore(x)), cols))
+
         for field, col in zip(fields, cols):
             val = getattr(d, field)
-            if type(val) == str:
-                res += f"{col} = \"{val}\", "
-            else:
-                res += f"{col} = {val}, "
+            res += f"{col} = {self.get_val(val)}, "
 
-        return res
+        return res.rstrip(", ")
 
     def get_column_names(self, table):
         """
@@ -52,7 +56,7 @@ class Database:
         query = f"SHOW COLUMNS IN {table}"
         self.cursor.execute(query)
         cols_info = self.cursor.fetchall()[1:]
-        return ", ".join([t[0] for t in cols_info])
+        return [t[0] for t in cols_info]
 
     def get_val(self, s):
         """
@@ -63,18 +67,26 @@ class Database:
         if type(s) == int or type(s) == float:
             return s
         else:
-            return f"\'{s}\'"
+            return f"\"{s}\""
 
-    def check(self, table, obj, cols):
+    def check(self, table, obj, cols=[]):
         """
-        Checks if an entry is the table
+        Checks if an entry is the table.
+        Performs SELECT <id> FROM <table> WHERE <attr1> = <val1> ...
+        for every attribute in object.
+        if cols is specified, only queries those specific attributes
         :param table: table name
         :param obj: object with value(s) to be searched
-        :param cols: list of database columns to search over
         :return: id for value being searched for or None
         """
+        if not cols:
+            columns = self.get_column_names(table)
+            cols = columns.copy()
+
+        if "dateScraped" in cols:
+            cols.remove("dateScraped")
         vals = [getattr(obj, inflection.underscore(key)) for key in cols]
-        values = vals.copy()
+
         update = f'{cols.pop(0)}={self.get_val(vals.pop(0))}'
 
         for k, v in zip(cols, vals):
@@ -97,23 +109,35 @@ class Database:
         self.cursor.execute(check)
         res = self.cursor.fetchone()
         if not res:
+            print("Empty DB...")
             return True
 
         return False
 
-    def insert(self, table, columns, tup, date=()):
+    def update_tag_table(self, tags):
+        """
+        Update tags database with all pages of tags
+        :param tags: list of all tags
+        """
+        print("Updating DB...")
+        self.insert_tags(tags)
+
+    def insert(self, table, tup, date):
         """
         inserts data into table
         :param table: table name
-        :param columns: string of all column names
         :param tup: tuple of data to be inserted
         :param date: date as string
         """
+        if not date == ():
+            tup = tup + (date,)
+        columns = ", ".join(self.get_column_names(table))
         query = f"INSERT INTO {table}({columns})\
-                        VALUES {tup + date}"
+                        VALUES {tup}"
+
         self.cursor.execute(query)
 
-    def update(self, table, fields, date, primary_key):
+    def update(self, table, fields, primary_key):
         """
         update a row in table with values with row id
         :param table: table name
@@ -123,45 +147,49 @@ class Database:
         :return:
         """
         query = f"UPDATE {table} SET \
-                {fields} dateScraped = '{date}' \
+                {fields} \
                 WHERE id{table} = {primary_key}"
         self.cursor.execute(query)
 
-    def upsert(self, obj, date, columns, table, to_del=[]):
+    def upsert(self, obj, table, date=(), to_del=[], cols=[]):
         """
         performs an insert if data is not in table or an update if it is present
         :param obj: object with values to update in database
-        :param date: date as string
-        :param columns: database columns
         :param table: table name
+        :param date: (Optional) date as string
         :param to_del: (Optional) field to remove from object before insertion into data
+        :param cols:  (Optional) attributes of table to query over
         """
         tup = obj.convert_to_tuple(to_del)
-        res = self.check(table, obj, columns)
         columns = self.get_column_names(table)
+        res = self.check(table, obj, cols)
 
         if not res:
-            self.insert(table, columns, tup, (date,))
+            self.insert(table, tup, date)
         else:
-            fields = self.update_helper(obj, columns)
-            self.update(table, fields, date, res)
+            fields = self.update_helper(obj, columns, date)
+            self.update(table, fields, res)
         self.db.commit()
 
     def insert_articles(self, data):
+        """
+        insert list of Acticle objects into Article table
+        :param data: list of Articles
+        """
         date = str(datetime.datetime.now())
 
         for row in data:
-            self.upsert(row, date, ["id"], "Article")
+            self.upsert(row, "Article", date)
 
     def insert_tags(self, data):
         """
-        inserts Tag objects into Tag table
+        inserts list of Tag objects into Tag table
         :param data: list of Tag objects
         """
         date = str(datetime.datetime.now())
 
         for row in data:
-            self.upsert(row, date, ["name"], "Tag")
+            self.upsert(row, "Tag", date)
 
     def insert_question_summaries(self, data):
         """
@@ -174,24 +202,21 @@ class Database:
             tags = row.tags
             articles = row.articles
 
-            self.upsert(row, date, ["ref"], "QuestionSummary", ['tags', 'articles'])
+            self.upsert(row, "QuestionSummary", date, ['tags', 'articles'], ['ref', 'question'])
             self.insert_articles(articles)
 
-            qs_id = self.check("QuestionSummary", row, ["ref"])
+            qs_id = self.check("QuestionSummary", row)
 
             for tag in tags:
-                tag_id = self.check("Tag", tag, ["name"])
+                tag_id = self.check("Tag", tag, ['name'])
                 ass_tag = AssociatedTag(tag_id, qs_id)
-                res = self.check("AssociatedTag", ass_tag, ["tagId", "questionSummaryId"])
 
-                if not res:
-                    self.insert("AssociatedTag", "tagId, questionSummaryId", (tag_id, qs_id))
+                self.upsert(ass_tag, "AssociatedTag")
 
             for article in articles:
-                article_id = self.check("Article", article, ["id"])
+                article_id = self.check("Article", article)
                 ass_tag = AssociatedArticle(article_id, qs_id)
-                res = self.check("AssociatedArticle", ass_tag, ["articleId", "questionSummaryId"])
 
-                if not res:
-                    self.insert("AssociatedArticle", "articleId, questionSummaryId", (article_id, qs_id))
+                self.upsert(ass_tag, "AssociatedArticle")
+
 

@@ -1,3 +1,4 @@
+""" Article class contains the fields of a Article object"""
 import re
 
 

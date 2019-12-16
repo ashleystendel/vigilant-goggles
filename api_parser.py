@@ -1,6 +1,4 @@
-""" API Parser that """
-import json
-
+""" API Parser that gets a list of objects from url specified in config"""
 from config import api
 import requests
 
