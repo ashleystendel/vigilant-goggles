@@ -1,6 +1,7 @@
 vigilant-goggles
 ------------------
 ![Alt Text](https://media.giphy.com/media/11Utgl7978APwQ/giphy.gif)
+
 Web scraping medical stackexchange
 
 ## Requirements
