@@ -1,7 +1,9 @@
 """ API Parser that gets a list of objects from url specified in config"""
 from config import api
 import requests
+from logger import Logger
 
+log = Logger()
 
 class APIParser:
 
@@ -24,8 +26,7 @@ class APIParser:
             obj_lst = [klass(a) for a in obj_dict]
             return obj_lst
         else:
-            print(f'Error during API - Call: {response.status_code}')
-            print(f'{response.content}')
+            log.logger.error(f'Error during API - Call: {response.status_code} {response.content}')
         return []
 
     def get_responses(self, klass, reference_objects):

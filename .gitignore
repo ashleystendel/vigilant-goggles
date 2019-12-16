@@ -9,3 +9,4 @@ scraper_schema.mwb*
 *.pdf
 config.json
 config.py
+*.log

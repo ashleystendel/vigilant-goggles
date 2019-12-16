@@ -2,10 +2,12 @@ import mysql.connector
 from mysql.connector import errorcode
 import datetime
 import inflection
-
 from associated_article import AssociatedArticle
 from associated_tag import AssociatedTag
 import config
+from logger import Logger
+
+log = Logger()
 
 
 class Database:
@@ -15,11 +17,11 @@ class Database:
             self.db = mysql.connector.connect(**sql_config, use_pure=True)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                print("Something is wrong with your user name or password")
+                log.logger.error("Something is wrong with your user name or password")
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                print("Database does not exist")
+                log.logger.error("Database does not exist")
             else:
-                print(err)
+                log.logger.error(err)
         self.cursor = self.db.cursor(buffered=True)
 
     def update_helper(self, d, columns, date=()):
@@ -38,7 +40,7 @@ class Database:
             cols.remove('dateScraped')
             res = f"dateScraped = \"{date}\", "
 
-        #Convert camel case database column names to underscore for object
+        # Convert camel case database column names to underscore for object
         fields = list(map((lambda x: inflection.underscore(x)), cols))
 
         for field, col in zip(fields, cols):
@@ -54,7 +56,11 @@ class Database:
         :return: list of column names
         """
         query = f"SHOW COLUMNS IN {table}"
-        self.cursor.execute(query)
+        try:
+            self.cursor.execute(query)
+        except mysql.connector.Error as err:
+            log.logger.error(f'Could not get column names: {err}')
+            return []
         cols_info = self.cursor.fetchall()[1:]
         return [t[0] for t in cols_info]
 
@@ -109,7 +115,7 @@ class Database:
         self.cursor.execute(check)
         res = self.cursor.fetchone()
         if not res:
-            print("Empty DB...")
+            log.logger.warning("Empty DB...")
             return True
 
         return False
@@ -119,7 +125,7 @@ class Database:
         Update tags database with all pages of tags
         :param tags: list of all tags
         """
-        print("Updating DB...")
+        log.logger.debug(f'Updating DB...{tags}')
         self.insert_tags(tags)
 
     def insert(self, table, tup, date):
@@ -134,8 +140,10 @@ class Database:
         columns = ", ".join(self.get_column_names(table))
         query = f"INSERT INTO {table}({columns})\
                         VALUES {tup}"
-
-        self.cursor.execute(query)
+        try:
+            self.cursor.execute(query)
+        except mysql.connector.Error as err:
+            log.logger.error(f'Something went wrong during database insert: {err}')
 
     def update(self, table, fields, primary_key):
         """
@@ -149,7 +157,10 @@ class Database:
         query = f"UPDATE {table} SET \
                 {fields} \
                 WHERE id{table} = {primary_key}"
-        self.cursor.execute(query)
+        try:
+            self.cursor.execute(query)
+        except mysql.connector.Error as err:
+            log.logger.error(f'Something went wrong during a database update: {err}')
 
     def upsert(self, obj, table, date=(), to_del=[], cols=[]):
         """
@@ -218,5 +229,3 @@ class Database:
                 ass_tag = AssociatedArticle(article_id, qs_id)
 
                 self.upsert(ass_tag, "AssociatedArticle")
-
-

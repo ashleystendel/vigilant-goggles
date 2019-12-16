@@ -9,11 +9,8 @@ from question_summary import QuestionSummary
 from tag import Tag
 from database_connection import Database
 from article import Article
-from logger import Logger
 
 MAX = 9999
-args = {'debug' : True}
-log = Logger(args)
 
 
 def update_tag_table(db):
@@ -35,7 +32,6 @@ def main():
         tags = tag_parser.get_pages(Tag, MAX)
         db.update_tag_table(tags)
 
-    log.logger.warning("Getting Question Summaries...")
     print("Getting Question Summaries...")
     summary_parser = PageParser("question_summary")
     summaries = summary_parser.get_pages(QuestionSummary, args.num_pages)

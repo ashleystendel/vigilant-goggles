@@ -12,3 +12,7 @@ url = { 'base_url': 'https://medicalsciences.stackexchange.com/',
 api = {
             "key": "api_keyqq",
             "base_url": "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=" }
+
+logger = {
+            "file_path": "./logs/vigilant_goggles",
+            "logfile_location": "./logs"}
