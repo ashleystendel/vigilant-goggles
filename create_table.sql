@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `vgdb`.`QuestionSummary` (
   `datePosted` DATETIME NOT NULL,
   `dateScraped` DATETIME NOT NULL,
   PRIMARY KEY (`idQuestionSummary`),
-  INDEX `ref` (`ref` ASC) VISIBLE)
+  INDEX `ref` (`ref` ASC) )
 ENGINE = InnoDB;
 
 
@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS `vgdb`.`AssociatedTag` (
   `tagId` INT NOT NULL,
   `questionSummaryId` INT NOT NULL,
   PRIMARY KEY (`idAssociatedTag`),
-  INDEX `questionSummary_idx` (`questionSummaryId` ASC) VISIBLE,
-  INDEX `tagName_idx` (`tagId` ASC) VISIBLE,
+  INDEX `questionSummary_idx` (`questionSummaryId` ASC) ,
+  INDEX `tagName_idx` (`tagId` ASC) ,
   CONSTRAINT `tagName`
     FOREIGN KEY (`tagId`)
     REFERENCES `vgdb`.`Tag` (`idTag`)
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `vgdb`.`Article` (
   `id` VARCHAR(150) NOT NULL,
   `dateScraped` DATETIME NOT NULL,
   PRIMARY KEY (`idArticle`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) )
 ENGINE = InnoDB;
 
 
@@ -105,8 +105,8 @@ CREATE TABLE IF NOT EXISTS `vgdb`.`AssociatedArticle` (
   `articleId` INT NOT NULL,
   `questionSummaryId` INT NOT NULL,
   PRIMARY KEY (`idAssociatedArticle`),
-  INDEX `questionSummaryId_idx` (`questionSummaryId` ASC) VISIBLE,
-  INDEX `articleId_idx` (`articleId` ASC) VISIBLE,
+  INDEX `questionSummaryId_idx` (`questionSummaryId` ASC) ,
+  INDEX `articleId_idx` (`articleId` ASC) ,
   CONSTRAINT `questionSummaryId`
     FOREIGN KEY (`questionSummaryId`)
     REFERENCES `vgdb`.`QuestionSummary` (`idQuestionSummary`)
