@@ -92,9 +92,10 @@ class Database:
         for k, v in zip(cols, vals):
             update += f' and {k}={self.get_val(v)}'
         check = f"SELECT id{table} FROM {table} WHERE {update}"
-
+        print(check);
         self.cursor.execute(check)
         res = self.cursor.fetchone()
+        print(f'Result from check: {res}')
         if not res:
             return res
         return res[0]
@@ -135,6 +136,7 @@ class Database:
         query = f"INSERT INTO {table}({columns})\
                         VALUES {tup}"
 
+        print(query)
         self.cursor.execute(query)
 
     def update(self, table, fields, primary_key):
@@ -149,6 +151,7 @@ class Database:
         query = f"UPDATE {table} SET \
                 {fields} \
                 WHERE id{table} = {primary_key}"
+        print(query)
         self.cursor.execute(query)
 
     def upsert(self, obj, table, date=(), to_del=[], cols=[]):
@@ -163,13 +166,13 @@ class Database:
         tup = obj.convert_to_tuple(to_del)
         columns = self.get_column_names(table)
         res = self.check(table, obj, cols)
-
         if not res:
             self.insert(table, tup, date)
         else:
             fields = self.update_helper(obj, columns, date)
             self.update(table, fields, res)
         self.db.commit()
+        return
 
     def insert_articles(self, data):
         """
@@ -179,7 +182,8 @@ class Database:
         date = str(datetime.datetime.now())
 
         for row in data:
-            self.upsert(row, "Article", date)
+            print("Article....")
+            self.upsert(row, "Article", date, cols=['id'])
 
     def insert_tags(self, data):
         """
@@ -214,9 +218,10 @@ class Database:
                 self.upsert(ass_tag, "AssociatedTag")
 
             for article in articles:
-                article_id = self.check("Article", article)
+                article_id = self.check("Article", article, ['id'])
+                print(f'Article ID: {article_id}')
                 ass_tag = AssociatedArticle(article_id, qs_id)
-
+                
                 self.upsert(ass_tag, "AssociatedArticle")
 
 
