@@ -1,14 +1,18 @@
 mysql = {
             'host': 'localhost',
             'user': 'itc',
-            'password': 'PASSWORD',
+            'password': 'password',
             'database': 'vgdb',
             'auth_plugin': 'mysql_native_password'}
-
-url = { 'base_url': 'https://medicalsciences.stackexchange.com/',
-        'tags': "https://medicalsciences.stackexchange.com/tags?page=",
-        'questions': "https://medicalsciences.stackexchange.com/questions?tab=newest&page="}
+url = {
+            'base_url': 'https://medicalsciences.stackexchange.com/',
+            'tag': 'tags?page=',
+            'question_summary': 'questions?tab=newest&page='}
 
 api = {
-            "key": "api_keyqq",
+            "key": "api_key",
             "base_url": "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=" }
+
+similarity = {
+            "api_key": "api_key",
+            "url" : "https://apis.paralleldots.com/v4/similarity" }

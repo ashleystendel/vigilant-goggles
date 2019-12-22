@@ -40,7 +40,7 @@ def main():
     article_parser = APIParser()
     articles = article_parser.get_responses(Article, summaries)
 
-    #Enrich Question Summary with articles
+    # Enrich Question Summary with articles
     for question_summary, articles_list in zip(summaries, articles):
         question_summary.add_articles(articles_list)
 

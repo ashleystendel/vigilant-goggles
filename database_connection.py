@@ -134,7 +134,6 @@ class Database:
         columns = ", ".join(self.get_column_names(table))
         query = f"INSERT INTO {table}({columns})\
                         VALUES {tup}"
-
         self.cursor.execute(query)
 
     def update(self, table, fields, primary_key):
@@ -215,7 +214,7 @@ class Database:
 
             for article in articles:
                 article_id = self.check("Article", article)
-                ass_tag = AssociatedArticle(article_id, qs_id)
+                ass_tag = AssociatedArticle(article_id, qs_id, article, row)
 
                 self.upsert(ass_tag, "AssociatedArticle")
 
