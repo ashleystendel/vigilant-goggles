@@ -3,6 +3,7 @@ from config import api
 import requests
 import time
 
+
 class APIParser:
 
     def __init__(self):
