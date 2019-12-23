@@ -5,18 +5,18 @@ import re
 
 class Article(GenericObservation):
     def __init__(self, args):
-        self.abstract = args.get('abstract', "").strip()[:5000]
-        self.web_url = args.get('web_url', "").strip()
+        self.abstract = args.get('abstract', "").strip()[:500]
+        self.web_url = args.get('web_url', "").strip()[:150]
         self.snippet = args.get('snippet', "").strip()[:500]
-        self.lead_paragraph = args.get('lead_paragraph', "").strip()[:5000]
-        self.print_section = args.get('print_section', "").strip()
-        self.print_page = args.get('print_page', "").strip()
-        self.source_name = args.get('source', "").strip()
-        self.headline = args.get('headline', {}).get('main', "").strip()
+        self.lead_paragraph = args.get('lead_paragraph', "").strip()[:500]
+        self.print_section = args.get('print_section', "").strip()[:45]
+        self.print_page = args.get('print_page', "").strip()[:45]
+        self.source_name = args.get('source', "").strip()[:45]
+        self.headline = args.get('headline', {}).get('main', "").strip()[:45]
         self.pub_date = args.get('pub_date', "").strip()[:-5]
-        self.document_type = args.get('document_type', "").strip()
-        self.section_name = args.get('section_name', "").strip()
-        self.id = args.get('_id', "").strip()
+        self.document_type = args.get('document_type', "").strip()[:45]
+        self.section_name = args.get('section_name', "").strip()[:45]
+        self.id = args.get('_id', "").strip()[:150]
         self.replace_double_quotes()
 
     def replace_double_quotes(self):

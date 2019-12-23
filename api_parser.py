@@ -17,6 +17,7 @@ class APIParser:
         # TODO: error handling on get request
         request_string = self.base_url + '\{' + ",".join(key_words) + '}&api-key=' + self.key
         response = requests.get(request_string)
+        print(response.status_code)
         time.sleep(6)
         if response.status_code == 200:
             info = response.json()
