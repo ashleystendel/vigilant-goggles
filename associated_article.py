@@ -25,5 +25,7 @@ class AssociatedArticle(GenericObservation):
                 "api_key": similarity_config['api_key']}
 
         response = requests.post(similarity_config['url'], data)
-        score = response.json()['similarity_score']
-        return score
+
+        if response.status_code == 200:
+            return response.json()['similarity_score']
+        return 0
