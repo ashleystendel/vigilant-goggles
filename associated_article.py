@@ -2,7 +2,7 @@
 from generic_observation import GenericObservation
 import config
 import requests
-
+import time
 
 class AssociatedArticle(GenericObservation):
 
@@ -23,9 +23,9 @@ class AssociatedArticle(GenericObservation):
         data = {"text_1":  article.abstract,
                 "text_2":  qs.question,
                 "api_key": similarity_config['api_key']}
-
+        time.sleep(3)
         response = requests.post(similarity_config['url'], data)
-
-        if response.status_code == 200:
+        print(response.json())
+        if 'similarity_score' in response.json().keys():
             return response.json()['similarity_score']
         return 0
